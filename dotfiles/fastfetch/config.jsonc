@@ -1,0 +1,96 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/dev/doc/json_schema.json",
+  "logo": {
+    "type": "file",
+    "source": "~/.config/fastfetch/logo.txt",
+    "padding": {
+      "top": 0,
+      "left": 1,
+      "right": 3
+    }
+  },
+  "display": {
+    "separator": " ",
+    "brightColor": false,
+    "color": {
+      "keys": "90",
+      "separator": "90",
+      "output": "white"
+    },
+    "bar": {
+      "width": 8,
+      "char": {
+        "elapsed": "━",
+        "total": "─"
+      },
+      "border": {
+        "left": "",
+        "right": ""
+      },
+      "color": {
+        "elapsed": "auto",
+        "total": "90"
+      }
+    },
+    "percent": {
+      "type": ["bar", "num"],
+      "color": {
+        "green": "green",
+        "yellow": "yellow",
+        "red": "red"
+      }
+    }
+  },
+  "modules": [
+    "break",
+    "break",
+    "break",
+    {
+      "type": "title",
+      "key": "╭─────────╮",
+      "format": "{#1}{#cyan}{user-name}{#90}@{#1}{#yellow}{host-name}"
+    },
+    {
+      "type": "os",
+      "key": "│ {#cyan}os      {#keys}│",
+      "format": "{name} {version}"
+    },
+    {
+      "type": "uptime",
+      "key": "│ {#cyan}uptime  {#keys}│"
+    },
+    {
+      "type": "packages",
+      "key": "│ {#cyan}pkgs    {#keys}│"
+    },
+    {
+      "type": "shell",
+      "key": "│ {#yellow}shell   {#keys}│"
+    },
+    {
+      "type": "terminal",
+      "key": "│ {#yellow}term    {#keys}│"
+    },
+    {
+      "type": "cpu",
+      "key": "│ {#green}cpu     {#keys}│",
+      "format": "{name} ({core-types})"
+    },
+    {
+      "type": "memory",
+      "key": "│ {#green}memory  {#keys}│",
+      "format": "{percentage-bar} {used} / {total}"
+    },
+    {
+      "type": "disk",
+      "key": "│ {#green}disk    {#keys}│",
+      "folders": "/",
+      "format": "{size-percentage-bar} {size-used} / {size-total}"
+    },
+    {
+      "type": "colors",
+      "key": "╰─────────╯",
+      "symbol": "circle"
+    }
+  ]
+}

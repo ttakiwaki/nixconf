@@ -1,0 +1,119 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run `zed: open default settings` from the
+// command palette (cmd-shift-p / ctrl-shift-p)
+{
+  "agent_servers": {
+    "github-copilot-cli": {
+      "default_config_options": {
+        "model": "auto",
+        "allow_all": "on",
+        "mode": "https://agentclientprotocol.com/protocol/session-modes#agent"
+      },
+      "type": "registry"
+    }
+  },
+  "git_panel": {
+    "default_width": 360.0,
+    "button": true
+  },
+  "collaboration_panel": {
+    "button": true
+  },
+  "outline_panel": {
+    "button": false
+  },
+  "debugger": {
+    "button": false
+  },
+  "edit_predictions": {
+    "provider": "copilot"
+  },
+  "proxy": "",
+  "vim_mode": false,
+  "theme": {
+    "mode": "system",
+    "light": "Tokyo Night Storm",
+    "dark": "Monochrome Waterfall"
+  },
+  "disable_ai": true,
+  "agent": {
+    "default_model": {
+      "provider": "google",
+      "model": "gemini-3.6-flash",
+      "enable_thinking": true,
+      "effort": "medium"
+    },
+    "dock": "right",
+    "favorite_models": [],
+    "model_parameters": [],
+    "terminal_init_command": "",
+  },
+  "icon_theme": "Catppuccin Frappé",
+  "project_panel": {
+    "dock": "left",
+  },
+  "minimap": {
+    "show": "always",
+  },
+  "buffer_font_fallbacks": ["Droid Sans Mono", "monospace"],
+  "buffer_font_family": "Hasklug Nerd Font",
+  "base_keymap": "VSCode",
+  "ui_font_size": 16,
+  "buffer_font_size": 15,
+  "format_on_save": "on",
+  "languages": {
+    "JavaScript": {
+      "formatter": {
+        "external": {
+          "command": "prettier",
+          "arguments": ["--stdin-filepath", "{buffer_path}"],
+        },
+      },
+    },
+    "TypeScript": {
+      "formatter": {
+        "external": {
+          "command": "prettier",
+          "arguments": ["--stdin-filepath", "{buffer_path}"],
+        },
+      },
+    },
+    "TSX": {
+      "formatter": {
+        "external": {
+          "command": "prettier",
+          "arguments": ["--stdin-filepath", "{buffer_path}"],
+        },
+      },
+    },
+    "JSON": {
+      "formatter": {
+        "external": {
+          "command": "prettier",
+          "arguments": ["--stdin-filepath", "{buffer_path}"],
+        },
+      },
+    },
+    "CSS": {
+      "formatter": {
+        "external": {
+          "command": "prettier",
+          "arguments": ["--stdin-filepath", "{buffer_path}"],
+        },
+      },
+    },
+    "HTML": {
+      "formatter": {
+        "external": {
+          "command": "prettier",
+          "arguments": ["--stdin-filepath", "{buffer_path}"],
+        },
+      },
+    },
+  },
+}

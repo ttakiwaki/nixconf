@@ -1,0 +1,290 @@
+#!/bin/bash
+# ~/.config/sketchybar/sketchybarrc
+
+PLUGIN_DIR="$CONFIG_DIR/plugins"
+
+# bar height in points (32pt = 64 physical px on Retina, matches the notch)
+BAR_HEIGHT=32
+
+# horizontal padding around the battery (points)
+PAD=6
+
+# ---- media popup sizes (points) ----
+POPUP_H=90       # popup height
+COVER_SZ=70      # cover / placeholder square size
+BTN_W=48         # each control button's width (3 buttons = text column width)
+BTN_H=22         # button height
+EDGE=12          # space between popup left edge and cover
+GAP=12           # space between cover and text
+
+# ---- palette (neutral, works on any wallpaper) ----
+BAR_BG=0xa6000000          # translucent black (~65%)
+POPUP_BG=0xa6000000        # popup background, same translucency as the bar
+TEXT=0xffe8e8e8
+DIM=0x80ffffff             # idle/paused/offline grey, separators
+BTN_BG=0x26ffffff          # popup button / placeholder background
+
+FONT="JetBrains Mono"
+ICON_FONT="Symbols Nerd Font"
+
+# Nerd Font glyphs as raw UTF-8 bytes (safe on macOS bash 3.2)
+ICON_WIFI=$'\xef\x87\xab'
+ICON_BT=$'\xef\x8a\x94'
+ICON_NOTE=$'\xef\x80\x81'
+ICON_PREV=$'\xef\x81\x88'
+ICON_PLAY=$'\xef\x81\x8b'
+ICON_NEXT=$'\xef\x81\x91'
+
+# (re)start the marquee helper that scrolls long track names
+rm -f /tmp/sketchybar-media.key   # clears art cache so it re-renders on startup/reload
+pkill -f "$PLUGIN_DIR/marquee.sh" 2>/dev/null
+"$PLUGIN_DIR/marquee.sh" >/dev/null 2>&1 &
+
+# left padding is 0 so the media item (and its popup) start at the very edge of the screen;
+# the media icon below carries the visual left margin instead
+sketchybar --bar \
+  position=top \
+  height=$BAR_HEIGHT \
+  margin=0 \
+  y_offset=0 \
+  corner_radius=0 \
+  color=$BAR_BG \
+  border_width=0 \
+  blur_radius=30 \
+  padding_left=0 \
+  padding_right=14 \
+  shadow=off
+
+sketchybar --default \
+  updates=when_shown \
+  icon.font="$ICON_FONT:Regular:13.0" \
+  icon.color=$TEXT \
+  label.font="$FONT:Medium:13.0" \
+  label.color=$TEXT \
+  padding_left=2 \
+  padding_right=2 \
+  icon.padding_left=6 \
+  icon.padding_right=6 \
+  label.padding_left=0 \
+  label.padding_right=6 \
+  background.drawing=off
+
+# ================= LEFT: media (always visible, click for popup) =================
+# idle = grey "No Music"; media.sh sets the icon/colors, marquee.sh sets the (scrolling) text
+sketchybar --add item media left \
+  --subscribe media mouse.entered mouse.exited \
+  --set media \
+    padding_left=0 \
+    icon.font="$ICON_FONT:Regular:14.0" \
+    icon.color=$DIM \
+    icon.padding_left=20 \
+    icon.padding_right=8 \
+    label="No Music" \
+    label.color=$DIM \
+    updates=on \
+    update_freq=2 \
+    popup.align=left \
+    popup.horizontal=on \
+    popup.height=$POPUP_H \
+    popup.background.color=$POPUP_BG \
+    popup.background.border_width=0 \
+    popup.background.corner_radius=0 \
+    popup.blur_radius=30 \
+    script="$PLUGIN_DIR/media.sh" \
+    click_script="sketchybar --set \$NAME popup.drawing=toggle"
+
+# ---- media popup (shown on click) ----
+# One horizontal row:  [ cover ] [ title / artist / buttons stacked ] [ close ]
+# title + artist have width=0 so they draw on top of the button column,
+# shifted up with y_offset. Tweak the y_offset values to change the spacing.
+
+# left edge spacer
+sketchybar --add item media.padl popup.media \
+  --set media.padl \
+    width=$EDGE \
+    padding_left=0 \
+    padding_right=0 \
+    icon.drawing=off \
+    label.drawing=off
+
+# cover art: media.sh saves it at 300px; scale 0.23 draws it ~70pt (keep in step with COVER_SZ).
+sketchybar --add item media.cover popup.media \
+  --set media.cover \
+    icon.drawing=off \
+    label.drawing=off \
+    width=$COVER_SZ \
+    padding_left=0 \
+    padding_right=$GAP \
+    background.drawing=on \
+    background.color=0x00000000 \
+    background.height=$COVER_SZ \
+    background.image.scale=0.23 \
+    background.image.corner_radius=0 \
+    drawing=off
+
+# placeholder tile, shown instead of the cover when the player sends no art
+sketchybar --add item media.cover_ph popup.media \
+  --set media.cover_ph \
+    icon="$ICON_NOTE" \
+    icon.font="$ICON_FONT:Regular:22.0" \
+    icon.color=$DIM \
+    icon.width=$COVER_SZ \
+    icon.align=center \
+    icon.padding_left=0 \
+    icon.padding_right=0 \
+    label.drawing=off \
+    width=$COVER_SZ \
+    padding_left=0 \
+    padding_right=$GAP \
+    background.drawing=on \
+    background.color=$BTN_BG \
+    background.corner_radius=0 \
+    background.height=$COVER_SZ
+
+sketchybar --add item media.title popup.media \
+  --set media.title \
+    width=0 \
+    y_offset=22 \
+    padding_left=0 \
+    padding_right=0 \
+    icon.drawing=off \
+    label="No Music" \
+    label.font="$FONT:Bold:12.0" \
+    label.padding_left=0 \
+    label.padding_right=0
+
+sketchybar --add item media.artist popup.media \
+  --set media.artist \
+    width=0 \
+    y_offset=5 \
+    padding_left=0 \
+    padding_right=0 \
+    icon.drawing=off \
+    label="" \
+    label.font="$FONT:Medium:11.0" \
+    label.color=$DIM \
+    label.padding_left=0 \
+    label.padding_right=0
+
+# buttons row (icon-only, evenly spaced, same total width as the text column)
+sketchybar --add item media.prev popup.media \
+  --set media.prev \
+    y_offset=-24 \
+    width=$BTN_W \
+    padding_left=0 \
+    padding_right=0 \
+    icon="$ICON_PREV" \
+    icon.font="$ICON_FONT:Regular:11.0" \
+    icon.width=$BTN_W \
+    icon.align=center \
+    icon.padding_left=0 \
+    icon.padding_right=0 \
+    label.drawing=off \
+    background.drawing=on \
+    background.color=$BTN_BG \
+    background.corner_radius=0 \
+    background.height=$BTN_H \
+    click_script="media-control previous-track; sleep 0.4; sketchybar --update"
+
+sketchybar --add item media.play popup.media \
+  --set media.play \
+    y_offset=-24 \
+    width=$BTN_W \
+    padding_left=0 \
+    padding_right=0 \
+    icon="$ICON_PLAY" \
+    icon.font="$ICON_FONT:Regular:11.0" \
+    icon.width=$BTN_W \
+    icon.align=center \
+    icon.padding_left=0 \
+    icon.padding_right=0 \
+    label.drawing=off \
+    background.drawing=on \
+    background.color=$BTN_BG \
+    background.corner_radius=0 \
+    background.height=$BTN_H \
+    click_script="media-control toggle-play-pause; sleep 0.4; sketchybar --update"
+
+sketchybar --add item media.next popup.media \
+  --set media.next \
+    y_offset=-24 \
+    width=$BTN_W \
+    padding_left=0 \
+    padding_right=0 \
+    icon="$ICON_NEXT" \
+    icon.font="$ICON_FONT:Regular:11.0" \
+    icon.width=$BTN_W \
+    icon.align=center \
+    icon.padding_left=0 \
+    icon.padding_right=0 \
+    label.drawing=off \
+    background.drawing=on \
+    background.color=$BTN_BG \
+    background.corner_radius=0 \
+    background.height=$BTN_H \
+    click_script="media-control next-track; sleep 0.4; sketchybar --update"
+
+# right edge spacer (mirrors media.padl)
+sketchybar --add item media.padr popup.media \
+  --set media.padr \
+    width=$EDGE \
+    padding_left=0 \
+    padding_right=0 \
+    icon.drawing=off \
+    label.drawing=off
+
+# ================= RIGHT (added right-to-left) =================
+# final on-screen order, left to right:
+#   date/time | wifi  bluetooth  battery
+
+# battery (rightmost)
+sketchybar --add item battery right \
+  --subscribe battery power_source_change system_woke \
+  --set battery \
+    update_freq=60 \
+    icon.padding_left=$PAD \
+    icon.padding_right=4 \
+    label.padding_right=$PAD \
+    click_script="open 'x-apple.systempreferences:com.apple.Battery-Settings.extension'" \
+    script="$PLUGIN_DIR/battery.sh"
+
+# bluetooth (opens Bluetooth settings; dim when bluetooth is off)
+sketchybar --add item bluetooth right \
+  --subscribe bluetooth system_woke \
+  --set bluetooth \
+    icon="$ICON_BT" \
+    label.drawing=off \
+    update_freq=15 \
+    click_script="open 'x-apple.systempreferences:com.apple.BluetoothSettings'" \
+    script="$PLUGIN_DIR/bluetooth.sh"
+
+# wifi
+sketchybar --add item wifi right \
+  --subscribe wifi wifi_change system_woke \
+  --set wifi \
+    icon="$ICON_WIFI" \
+    label.drawing=off \
+    update_freq=30 \
+    click_script="open 'x-apple.systempreferences:com.apple.wifi-settings-extension'" \
+    script="$PLUGIN_DIR/wifi.sh"
+
+# separator between date/time and the controls
+sketchybar --add item sep_right right \
+  --set sep_right \
+    icon.drawing=off \
+    label="|" \
+    label.color=$DIM \
+    label.padding_left=6 \
+    label.padding_right=6
+
+# date + time
+sketchybar --add item clock right \
+  --set clock \
+    icon.drawing=off \
+    label.padding_left=6 \
+    label="$(date '+%a %b %-d  %-I:%M %p')" \
+    update_freq=20 \
+    click_script="open -a Calendar" \
+    script="sketchybar --set \$NAME label=\"\$(date '+%a %b %-d  %-I:%M %p')\""
+
+sketchybar --update
