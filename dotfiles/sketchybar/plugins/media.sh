@@ -72,8 +72,12 @@ case "$SENDER" in
     ;;
 esac
 
-# ---- album art: decode once per track, resize to 300px, cache ----
-KEY=$(md5 -qs "$ARTIST|$ALBUM|$TITLE")
+# ---- album art: decode once per album (or per track if no album), resize to 300px, cache ----
+if [ -n "$ALBUM" ]; then
+  KEY=$(md5 -qs "$ARTIST|$ALBUM")
+else
+  KEY=$(md5 -qs "$ARTIST|$ALBUM|$TITLE")
+fi
 ART_FILE="$ART_DIR/$KEY.png"
 
 if [ ! -f "$ART_FILE" ]; then
