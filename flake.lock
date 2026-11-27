@@ -20,7 +20,41 @@
         "type": "github"
       }
     },
+    "kwall": {
+      "inputs": {
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1795822021,
+        "narHash": "sha256-lSGmdNRm50U640ZDAMMtsDjCWE7Vo/WhjPyFkX9UB0s=",
+        "owner": "ttakiwaki",
+        "repo": "kwall",
+        "rev": "fbfed37a6302221fe27c177f3bf1f39482feff0f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "ttakiwaki",
+        "repo": "kwall",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
+      "locked": {
+        "lastModified": 1795371335,
+        "narHash": "sha256-oa2P5WZer1A4wuhatl92JyHHEjrrOdIyuvTuI5LUi9Q=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "619c39f6eac5d1ed6b8f073a9414baf7034b2356",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "nixpkgs_2": {
       "locked": {
         "lastModified": 1795371335,
         "narHash": "sha256-oa2P5WZer1A4wuhatl92JyHHEjrrOdIyuvTuI5LUi9Q=",
@@ -39,7 +73,8 @@
     "root": {
       "inputs": {
         "home-manager": "home-manager",
-        "nixpkgs": "nixpkgs"
+        "kwall": "kwall",
+        "nixpkgs": "nixpkgs_2"
       }
     }
   },

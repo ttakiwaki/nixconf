@@ -7,6 +7,7 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    kwall.url = "github:ttakiwaki/kwall";
   };
 
   outputs =
@@ -39,6 +40,7 @@
           system = "aarch64-darwin";
           config.allowUnfree = true;
         };
+        extraSpecialArgs = { inherit inputs; };
         modules = [ ./hosts/macos/home.nix ];
       };
       formatter = forEachSupportedSystem ({ pkgs, ... }: pkgs.nixfmt);

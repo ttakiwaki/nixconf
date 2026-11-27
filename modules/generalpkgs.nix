@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
 {
   home.packages = with pkgs; [
@@ -7,6 +7,7 @@
     fastfetch
     yazi
     neovim
+    inputs.kwall.packages.${pkgs.stdenv.hostPlatform.system}.default
 
     # Tools
     nixd
