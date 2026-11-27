@@ -18,8 +18,8 @@ in
     "kitty".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/kitty";
     "btop".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/btop";
     "fastfetch".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/fastfetch";
-    "sketchybar".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/sketchybar";
-    "borders".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/borders";
+    "sketchybar".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/mac_specific/sketchybar";
+    "borders".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/mac_specific/borders";
     "yazi".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/yazi";
     "nvim".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/nvim";
     "zed".source = config.lib.file.mkOutOfStoreSymlink "${dotfilesDir}/zed";
