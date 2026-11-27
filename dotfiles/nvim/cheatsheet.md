@@ -22,6 +22,15 @@
 | `<Space>cd` | Show line diagnostics      |
 | `[d` / `]d` | Previous / next diagnostic |
 
+## Terminal & Python (`toggleterm.nvim`)
+
+| Key         | Mode              | Action                                         |
+| :---------- | :---------------- | :--------------------------------------------- |
+| `Ctrl+\`    | Normal / Terminal | Toggle floating terminal                       |
+| `<Space>tt` | Normal            | Toggle floating terminal                       |
+| `<Space>rp` | Normal            | Save & run current Python file in terminal     |
+| `Ctrl+\ Ctrl+n` | Terminal      | Exit typing mode to Normal mode                |
+
 ## Autocomplete (`blink.cmp` — Insert Mode)
 
 | Key                 | Action                     |

@@ -195,6 +195,7 @@ vim.pack.add({
     "https://github.com/nvim-mini/mini.nvim",
     "https://github.com/nvim-treesitter/nvim-treesitter",
     "https://github.com/neovim/nvim-lspconfig",
+    "https://github.com/akinsho/toggleterm.nvim",
     { src = "https://github.com/saghen/blink.cmp", version = vim.version.range("*") },
 })
 
@@ -232,6 +233,7 @@ miniclue.setup({
         miniclue.gen_clues.windows(),
         { mode = "n", keys = "<Leader>f", desc = "+Find" },
         { mode = "n", keys = "<Leader>c", desc = "+Code" },
+        { mode = "n", keys = "<Leader>r", desc = "+Run" },
     },
 })
 
@@ -253,6 +255,13 @@ require("blink.cmp").setup({
 -- Built-in LSP (Neovim 0.11+ native vim.lsp.enable)
 vim.lsp.enable({ "lua_ls", "nil_ls", "pyright", "gopls" })
 
+-- Floating / Interactive Terminal
+require("toggleterm").setup({
+    open_mapping = [[<C-\>]],
+    direction = "float",
+    float_opts = { border = "rounded" },
+})
+
 -- ==========================================================================
 -- 4. KEYMAPS
 -- ==========================================================================
@@ -260,6 +269,12 @@ vim.keymap.set("n", "<leader>ff", "<cmd>Pick files<CR>", { desc = "Find Files" }
 vim.keymap.set("n", "<leader>fg", "<cmd>Pick grep_live<CR>", { desc = "Live Grep" })
 vim.keymap.set("n", "<leader>fb", "<cmd>Pick buffers<CR>", { desc = "Find Buffers" })
 vim.keymap.set("n", "<leader>e", function() require("mini.files").open() end, { desc = "File Explorer" })
+vim.keymap.set("n", "<leader>tt", "<cmd>ToggleTerm<CR>", { desc = "Toggle Terminal" })
+vim.keymap.set("n", "<leader>rp", function()
+    vim.cmd("write")
+    local file = vim.fn.shellescape(vim.fn.expand("%:p"))
+    require("toggleterm").exec("python3 " .. file, 1, nil, nil, "float", nil, false)
+end, { desc = "Run Python File" })
 
 -- LSP shortcuts
 vim.keymap.set("n", "gd", vim.lsp.buf.definition, { desc = "Go to Definition" })

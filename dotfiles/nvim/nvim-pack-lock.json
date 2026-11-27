@@ -16,6 +16,10 @@
     "nvim-treesitter": {
       "rev": "52773f0d13a0c11d0c3ef33c14ab6ecc1c17148b",
       "src": "https://github.com/nvim-treesitter/nvim-treesitter"
+    },
+    "toggleterm.nvim": {
+      "rev": "9a88eae817ef395952e08650b3283726786fb5fb",
+      "src": "https://github.com/akinsho/toggleterm.nvim"
     }
   }
 }
