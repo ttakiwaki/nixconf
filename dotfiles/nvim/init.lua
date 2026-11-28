@@ -328,7 +328,13 @@ vim.api.nvim_create_autocmd("FileType", {
 -- Autocomplete (replaces nvim-cmp)
 require("blink.cmp").setup({
     keymap = { preset = "enter" },
-    completion = { documentation = { auto_show = true } },
+    completion = {
+        menu = { border = "none" },
+        documentation = {
+            auto_show = true,
+            window = { border = "none" },
+        },
+    },
 })
 
 -- Built-in LSP (Neovim 0.11+ native vim.lsp.enable)
