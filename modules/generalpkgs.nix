@@ -28,6 +28,7 @@
     ripgrep
     fd
     uv
+    ruff
 
     # Fonts
     geist-font

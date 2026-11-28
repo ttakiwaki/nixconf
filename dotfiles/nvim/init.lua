@@ -196,6 +196,7 @@ vim.pack.add({
     "https://github.com/nvim-treesitter/nvim-treesitter",
     "https://github.com/neovim/nvim-lspconfig",
     "https://github.com/akinsho/toggleterm.nvim",
+    "https://github.com/stevearc/conform.nvim",
     { src = "https://github.com/saghen/blink.cmp", version = vim.version.range("*") },
 })
 
@@ -253,7 +254,21 @@ require("blink.cmp").setup({
 })
 
 -- Built-in LSP (Neovim 0.11+ native vim.lsp.enable)
-vim.lsp.enable({ "lua_ls", "nil_ls", "pyright", "gopls" })
+vim.lsp.enable({ "lua_ls", "nil_ls", "pyright", "gopls", "ruff" })
+
+-- Code Formatting (conform.nvim)
+require("conform").setup({
+    formatters_by_ft = {
+        python = { "ruff_organize_imports", "ruff_format" },
+        lua = { "stylua" },
+        nix = { "nixfmt" },
+        go = { "gofmt" },
+    },
+    format_on_save = {
+        timeout_ms = 500,
+        lsp_format = "fallback",
+    },
+})
 
 -- Floating / Interactive Terminal
 require("toggleterm").setup({
@@ -282,3 +297,6 @@ vim.keymap.set("n", "K", vim.lsp.buf.hover, { desc = "Hover Docs" })
 vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code Action" })
 vim.keymap.set("n", "<leader>cr", vim.lsp.buf.rename, { desc = "Rename Symbol" })
 vim.keymap.set("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
+vim.keymap.set({ "n", "v" }, "<leader>cf", function()
+    require("conform").format({ async = true, lsp_format = "fallback" })
+end, { desc = "Format Buffer" })

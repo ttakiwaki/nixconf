@@ -20,6 +20,7 @@
 | `<Space>ca` | Code action / quick fix    |
 | `<Space>cr` | Rename symbol              |
 | `<Space>cd` | Show line diagnostics      |
+| `<Space>cf` | Format buffer / selection  |
 | `[d` / `]d` | Previous / next diagnostic |
 
 ## Terminal & Python (`toggleterm.nvim`)
