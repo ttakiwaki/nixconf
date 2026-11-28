@@ -22,6 +22,7 @@ vim.opt.splitbelow = true -- Horizontal splits open below
 vim.opt.undofile = true   -- Persistent undo across sessions
 vim.opt.updatetime = 250  -- Faster CursorHold and diagnostic updates
 vim.opt.showmode = false  -- Hide "-- INSERT --" (put it in statusline instead)
+vim.o.winborder = "rounded" -- Rounded borders on all floating windows (LSP, diagnostics, pickers)
 
 -- Indentation
 vim.opt.tabstop = 4
@@ -64,6 +65,29 @@ vim.api.nvim_set_hl(0, "Pmenu", { ctermbg = 0, ctermfg = 7 })        -- Completi
 vim.api.nvim_set_hl(0, "PmenuSel", { ctermbg = 4, ctermfg = 0, bold = true })
 vim.api.nvim_set_hl(0, "FloatBorder", { ctermfg = 8, ctermbg = "none" })
 vim.api.nvim_set_hl(0, "WinSeparator", { ctermfg = 8, ctermbg = "none" })
+vim.api.nvim_set_hl(0, "MiniIndentscopeSymbol", { ctermfg = 8 })
+vim.api.nvim_set_hl(0, "MiniPickMatchCurrent", { ctermbg = 0, ctermfg = 15, bold = true })
+vim.api.nvim_set_hl(0, "MiniPickPrompt", { ctermfg = 4, ctermbg = "none", bold = true })
+vim.api.nvim_set_hl(0, "MiniStarterHeader",     { ctermfg = 14, bold = true })
+vim.api.nvim_set_hl(0, "MiniStarterFooter",     { ctermfg = 14 })
+vim.api.nvim_set_hl(0, "MiniStarterSection",    { ctermfg = 13, bold = true })
+vim.api.nvim_set_hl(0, "MiniStarterItemPrefix", { ctermfg = 12, bold = true })
+vim.api.nvim_set_hl(0, "MiniStarterItemBullet", { ctermfg = 14 })
+vim.api.nvim_set_hl(0, "MiniStarterQuery",      { ctermfg = 10, bold = true })
+vim.api.nvim_set_hl(0, "MiniStarterCurrent",    { ctermbg = "none", ctermfg = 14, bold = true })
+vim.api.nvim_set_hl(0, "BlinkCmpKind", { ctermfg = 6 })
+
+-- Statusline 16-color ANSI pills (transparent center, colored badges)
+vim.api.nvim_set_hl(0, "MiniStatuslineModeNormal",  { ctermbg = 4, ctermfg = 0, bold = true })
+vim.api.nvim_set_hl(0, "MiniStatuslineModeInsert",  { ctermbg = 2, ctermfg = 0, bold = true })
+vim.api.nvim_set_hl(0, "MiniStatuslineModeVisual",  { ctermbg = 5, ctermfg = 0, bold = true })
+vim.api.nvim_set_hl(0, "MiniStatuslineModeReplace", { ctermbg = 1, ctermfg = 0, bold = true })
+vim.api.nvim_set_hl(0, "MiniStatuslineModeCommand", { ctermbg = 3, ctermfg = 0, bold = true })
+vim.api.nvim_set_hl(0, "MiniStatuslineModeOther",   { ctermbg = 6, ctermfg = 0, bold = true })
+vim.api.nvim_set_hl(0, "MiniStatuslineDevinfo",     { ctermbg = 0, ctermfg = 7 })
+vim.api.nvim_set_hl(0, "MiniStatuslineFilename",    { ctermbg = "none", ctermfg = 15, bold = true })
+vim.api.nvim_set_hl(0, "MiniStatuslineFileinfo",    { ctermbg = 0, ctermfg = 6 })
+vim.api.nvim_set_hl(0, "MiniStatuslineInactive",    { ctermbg = "none", ctermfg = 8 })
 
 -- Distinct 16-color ANSI syntax mapping (overrides "vim" defaults that grouped too many tokens together)
 local syntax_groups = {
@@ -202,10 +226,64 @@ vim.pack.add({
 
 -- Icons & UI Polish
 require("mini.icons").setup()
-require("mini.statusline").setup({ use_icons = true })
+local statusline = require("mini.statusline")
+statusline.setup({
+    use_icons = true,
+    content = {
+        active = function()
+            local mode, mode_hl = statusline.section_mode({ trunc_width = 120 })
+            local git           = statusline.section_git({ trunc_width = 40 })
+            local diff          = statusline.section_diff({ trunc_width = 75 })
+            local diagnostics   = statusline.section_diagnostics({ trunc_width = 75 })
+            local filename      = statusline.section_filename({ trunc_width = 140 })
+            local fileinfo      = statusline.section_fileinfo({ trunc_width = 120 })
+            local location      = "%l:%c │ %p%%"
+
+            local clients = vim.lsp.get_clients({ bufnr = 0 })
+            local lsp = ""
+            if #clients > 0 then
+                local names = vim.tbl_map(function(c) return c.name end, clients)
+                lsp = " " .. table.concat(names, ", ")
+            end
+
+            return statusline.combine_groups({
+                { hl = mode_hl,                  strings = { mode:upper() } },
+                { hl = "MiniStatuslineDevinfo",  strings = { git, diff, diagnostics } },
+                "%<",
+                { hl = "MiniStatuslineFilename", strings = { filename } },
+                "%=",
+                { hl = "MiniStatuslineDevinfo",  strings = { lsp } },
+                { hl = "MiniStatuslineFileinfo", strings = { fileinfo } },
+                { hl = mode_hl,                  strings = { location } },
+            })
+        end,
+    },
+})
 require("mini.indentscope").setup({ symbol = "│" })
 require("mini.notify").setup()
 require("mini.diff").setup()
+local hour = tonumber(os.date("%H"))
+local greeting = (hour < 12 and "Good morning") or (hour < 18 and "Good afternoon") or "Good evening"
+local welcome = string.format("%s, %s!", greeting, vim.env.USER or "user")
+local pad = string.rep(" ", math.max(0, math.floor((48 - #welcome) / 2)))
+local rule = string.rep("─", 48)
+local starter = require("mini.starter")
+starter.setup({
+    header = table.concat({
+        "                     │\\  ││",
+        "                     ││\\ ││",
+        "                     ││ \\││",
+        "                     ││  \\│",
+        "",
+        pad .. welcome,
+        rule,
+    }, "\n"),
+    footer = rule,
+    content_hooks = {
+        starter.gen_hook.adding_bullet("▸ "),
+        starter.gen_hook.aligning("center", "center"),
+    },
+})
 
 -- Editing Ergonomics (the "LazyVim feel")
 require("mini.pairs").setup()    -- Auto-close (), [], {}, ""
@@ -255,6 +333,18 @@ require("blink.cmp").setup({
 
 -- Built-in LSP (Neovim 0.11+ native vim.lsp.enable)
 vim.lsp.enable({ "lua_ls", "nil_ls", "pyright", "gopls", "ruff" })
+
+vim.diagnostic.config({
+    virtual_text = { prefix = "●" },
+    signs = {
+        text = {
+            [vim.diagnostic.severity.ERROR] = " ",
+            [vim.diagnostic.severity.WARN]  = " ",
+            [vim.diagnostic.severity.INFO]  = " ",
+            [vim.diagnostic.severity.HINT]  = "󰌵 ",
+        },
+    },
+})
 
 -- Code Formatting (conform.nvim)
 require("conform").setup({
